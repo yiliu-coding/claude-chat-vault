@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude chat vault</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<div class="viz-root" id="app">
+  <header class="top">
+    <div>
+      <h1>Claude chat vault</h1>
+      <p class="sub" id="sub">Loading…</p>
+    </div>
+    <div class="top-actions">
+      <span class="muted" id="backup-state"></span>
+      <button class="btn primary" id="btn-backup" type="button">Back up now</button>
+      <button class="btn ghost" id="btn-theme" type="button">Theme: auto</button>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Pages">
+    <button type="button" class="on" data-view="chats">Chats</button>
+    <button type="button" data-view="settings">Settings &amp; this PC</button>
+  </nav>
+
+  <main id="view-chats">
+  <section class="card welcome hidden" id="welcome"></section>
+
+  <section class="kpis" id="kpis" aria-label="Summary"></section>
+
+  <section class="filters" aria-label="Filters">
+    <input id="f-search" type="search" placeholder="Search titles, prompts, folders, notes" aria-label="Search">
+    <select id="f-source" aria-label="Source"></select>
+    <select id="f-status" aria-label="Status">
+      <option value="">All chats</option>
+      <option value="in">Still in ~/.claude</option>
+      <option value="gone">Only in the vault</option>
+      <option value="star">Starred</option>
+    </select>
+    <div class="seg" id="f-period" role="group" aria-label="Last activity">
+      <button type="button" data-days="0" class="on">All time</button>
+      <button type="button" data-days="90">90 days</button>
+      <button type="button" data-days="30">30 days</button>
+      <button type="button" data-days="7">7 days</button>
+    </div>
+    <button type="button" class="chip hidden" id="f-dir" title="Clear the directory filter"></button>
+  </section>
+
+  <section class="charts">
+    <div class="card">
+      <h2>Chats by week of last activity</h2>
+      <p class="card-sub">Each chat counted once, in the week it was last used</p>
+      <div class="legend" id="lg-weeks"></div>
+      <div class="chart" id="ch-weeks"></div>
+      <button type="button" class="link" id="tg-weeks">Show as table</button>
+      <div class="table-wrap hidden" id="tb-weeks"></div>
+    </div>
+    <div class="card">
+      <h2>Vault space by directory</h2>
+      <p class="card-sub">Chats plus their tool results; click a bar to list that directory's chats</p>
+      <div class="hbars" id="ch-size"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>Directories</h2>
+      <label class="check"><input type="checkbox" id="f-weak"> also folders with weak evidence (<span id="n-weak">0</span>)</label>
+    </div>
+    <p class="card-sub">Every folder where Claude Code was used, kept even after its chats or ~/.claude records are gone</p>
+    <div class="table-wrap"><table id="t-dirs"></table></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>Chats</h2>
+      <span class="muted" id="n-chats"></span>
+    </div>
+    <div class="table-wrap"><table id="t-chats"></table></div>
+    <button type="button" class="link hidden" id="more-chats">Show more</button>
+  </section>
+
+  </main>
+
+  <main id="view-settings" class="hidden">
+    <section class="card">
+      <h2>How long Claude Code keeps chats</h2>
+      <p class="card-sub">Claude Code deletes a chat when it has not been used for this long (the <code>cleanupPeriodDays</code> setting; 30 days if it is not set). Chats already in the vault stay safe either way.</p>
+      <div id="retention"></div>
+    </section>
+    <section class="card">
+      <h2>Automatic backup</h2>
+      <p class="card-sub">Runs once a day with your operating system's scheduler; a missed run happens at the next logon or wake.</p>
+      <div id="schedule"></div>
+    </section>
+    <section class="card">
+      <div class="card-head"><h2>What is backed up</h2></div>
+      <p class="card-sub">Claude Code folders on this PC and on servers you reach over ssh. Places found by the scan start switched off.</p>
+      <div class="table-wrap"><table id="t-sources"></table></div>
+      <div id="suggestions"></div>
+    </section>
+    <section class="card">
+      <div class="card-head">
+        <h2>This PC</h2>
+        <div class="top-actions">
+          <label class="check"><input type="checkbox" id="scan-wsl"> include WSL (starts it)</label>
+          <button class="btn small" id="btn-scan" type="button">Scan this PC again</button>
+        </div>
+      </div>
+      <p class="card-sub">Collected on this PC only and kept in the vault folder; nothing is sent anywhere.</p>
+      <div id="pc"></div>
+    </section>
+    <section class="card">
+      <div class="card-head"><h2>The vault</h2><button class="btn small" id="btn-open-vault" type="button">Open vault folder</button></div>
+      <div id="vault-info"></div>
+    </section>
+  </main>
+
+  <footer class="muted" id="foot"></footer>
+</div>
+
+<aside class="drawer hidden" id="drawer" aria-label="Chat"></aside>
+<div class="tooltip hidden" id="tooltip" role="tooltip"></div>
+<div class="toast hidden" id="toast" role="status"></div>
+</body>
+</html>

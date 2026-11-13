@@ -1,0 +1,5 @@
+# private: the vault holds full chat contents, the config holds your paths and host names
+data/
+config.json
+__pycache__/
+*.pyc
